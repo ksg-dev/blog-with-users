@@ -66,20 +66,30 @@ with app.app_context():
     db.create_all()
 
 
+
+
 # Use Werkzeug to hash the user's password when creating a new user.
 @app.route('/register', methods=["GET", "POST"])
 def register():
     form = RegisterForm()
 
     if form.validate_on_submit():
-        new_user = User(
-            email=form.email.data,
-            name=form.name.data.title(),
-            password= generate_password_hash(form.password.data, method='pbkdf2:sha256', salt_length=8)
-        )
+        entered_email = form.email.data
+        user_check = db.session.execute(db.select(User).where(User.email == entered_email)).scalar()
+        if user_check:
+            flash("That email is already registered. Login instead")
+            return redirect(url_for("login"))
+        else:
+            new_user = User(
+                email=entered_email,
+                name=form.name.data.title(),
+                password= generate_password_hash(form.password.data, method='pbkdf2:sha256', salt_length=8)
+            )
 
-        db.session.add(new_user)
-        db.session.commit()
+            db.session.add(new_user)
+            db.session.commit()
+
+            return redirect(url_for("get_all_posts"))
 
     return render_template("register.html", form=form)
 
