@@ -73,6 +73,7 @@ with app.app_context():
 def load_user(user_id):
     return db.get_or_404(User, user_id)
 
+
 # Use Werkzeug to hash the user's password when creating a new user.
 @app.route('/register', methods=["GET", "POST"])
 def register():
@@ -83,7 +84,7 @@ def register():
         user_check = db.session.execute(db.select(User).where(User.email == entered_email)).scalar()
         if user_check:
             flash("That email is already registered. Login instead")
-            return redirect(url_for("login"))
+            return redirect(url_for("login", form=form))
         else:
             new_user = User(
                 email=entered_email,
@@ -105,9 +106,28 @@ def register():
 # TODO: Retrieve a user from the database based on their email. 
 @app.route('/login', methods=["GET", "POST"])
 def login():
+    form = LoginForm()
 
+    if form.validate_on_submit():
+        email = form.email.data
+        login_password = form.password.data
 
-    return render_template("login.html")
+        user = db.session.execute(db.select(User).where(User.email == email)).scalar()
+        if user:
+            if check_password_hash(user.password, login_password):
+                login_user(user)
+
+                return redirect(url_for("get_all_posts"))
+
+            else:
+                flash("Email/Password combination incorrect")
+                return redirect(url_for("login", form=form))
+
+        else:
+            flash("We have no record of that email. Please try again.")
+            return redirect(url_for("login", form=form))
+
+    return render_template("login.html", form=form)
 
 
 @app.route('/logout')
