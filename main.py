@@ -57,6 +57,8 @@ class User(UserMixin, db.Model):
     # This will act like a List of BlogPost objects attached to each User.
     # The "author" refers to the author property in the BlogPost class.
     posts: Mapped[List["BlogPost"]] = relationship(back_populates="author")
+    # Link to comments table
+    comments: Mapped[List["Comment"]] = relationship(back_populates="comment_author")
 
 
 class BlogPost(db.Model):
@@ -75,8 +77,23 @@ class BlogPost(db.Model):
     body: Mapped[str] = mapped_column(Text, nullable=False)
     img_url: Mapped[str] = mapped_column(String(250), nullable=False)
 
+    # Link to comments
+    comments: Mapped[List["Comment"]] = relationship(back_populates="parent_post")
 
 
+class Comment(db.Model):
+    __tablename__ = "comments"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    # Create Foreign Key, "users.id" the users refers to the tablename of User.
+    author_id: Mapped[int] = mapped_column(Integer, ForeignKey(User.id), index=True)
+    # Create reference to the User object. The "posts" refers to the posts property in the User class.
+    comment_author: Mapped["User"] = relationship(back_populates="comments")
+
+    post_id: Mapped[int] = mapped_column(Integer, ForeignKey(BlogPost.id), index=True)
+    parent_post: Mapped["BlogPost"] = relationship(back_populates="comments")
+
+    text: Mapped[str] = mapped_column(Text, nullable=False)
 
 
 with app.app_context():
