@@ -8,7 +8,7 @@
     />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Angela's Blog</title>
+    <title>Sonni's Blog</title>
     {% block styles %}
     <!-- Load Bootstrap-Flask CSS here -->
     {{ bootstrap.load_css() }}
@@ -44,7 +44,7 @@
     <!-- Navigation-->
     <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
       <div class="container px-4 px-lg-5">
-        <a class="navbar-brand" href="/">Start Bootstrap</a>
+        <a class="navbar-brand" href="/">Blog</a>
         <button
           class="navbar-toggler"
           type="button"
@@ -54,6 +54,7 @@
           aria-expanded="false"
           aria-label="Toggle navigation"
         >
+
           Menu
           <i class="fas fa-bars"></i>
         </button>
@@ -66,7 +67,7 @@
                 >Home</a
               >
             </li>
-            <!-- TODO: Only show Login/Register if user is logged out. Otherwise show "Log Out" -->
+            <!-- Only show Login/Register if user is logged out. Otherwise show "Log Out" -->
             {% if not current_user.is_authenticated %}
             <li class="nav-item">
               <a
@@ -81,8 +82,9 @@
                 href="{{ url_for('register') }}"
                 >Register</a
               >
-              {% else %}
+
             </li>
+            {% else %}
             <li class="nav-item">
               <a
                 class="nav-link px-lg-3 py-3 py-lg-4"

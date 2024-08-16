@@ -20,7 +20,14 @@
     </div>
   </div>
 </header>
-
+<!-- Use Message Flashing to display feedback to the user with a <p> -->
+      {% with messages = get_flashed_messages() %}
+          {% if messages %}
+              {% for message in messages %}
+                <p class="flash">{{ message }}</p>
+              {% endfor %}
+          {% endif %}
+       {% endwith %}
 <!-- Post Content -->
 <article>
   <div class="container px-4 px-lg-5">
@@ -39,7 +46,7 @@
         </div>
 
         <!-- Comments Area -->
-        <!-- TODO: Add a CKEditor for commenting below -->
+        <!-- Add a CKEditor for commenting below -->
         <div class="comment">
         {{ ckeditor.load(pkg_type="full") }}
         {{ ckeditor.config(name='comment') }}
@@ -47,15 +54,21 @@
         {{ render_form(form, novalidate=True) }}
           <!-- TODO: Show all the comments on a post -->
           <ul class="commentList">
-            <li>
-              <div class="commenterImage">
-                <img src="../static/assets/img/default-profile.jpg" />
-              </div>
-              <div class="commentText">
-                <p>Some comment</p>
-                <span class="date sub-text">comment author name</span>
-              </div>
-            </li>
+            {% if comments %}
+              {% for comment in comments %}
+                <li>
+                <div class="commenterImage">
+                  <img src="../static/assets/img/default-profile.jpg" />
+                </div>
+                <div class="commentText">
+                  {{ comment.text|safe }}
+                  <span class="date sub-text">{{ comment.comment_author.name }}</span>
+                </div>
+              </li>
+              {% endfor %}
+            {% else %}
+              No comments have been made on this post yet.
+          {% endif %}
           </ul>
         </div>
       </div>
