@@ -52,13 +52,13 @@
         {{ ckeditor.config(name='comment') }}
 
         {{ render_form(form, novalidate=True) }}
-          <!-- TODO: Show all the comments on a post -->
+          <!-- Show all the comments on a post -->
           <ul class="commentList">
             {% if comments %}
               {% for comment in comments %}
                 <li>
                 <div class="commenterImage">
-                  <img src="../static/assets/img/default-profile.jpg" />
+                  <img src="{{ comment.comment_author.email | gravatar }}" />
                 </div>
                 <div class="commentText">
                   {{ comment.text|safe }}

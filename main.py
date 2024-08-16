@@ -32,14 +32,28 @@ app.config['SECRET_KEY'] = '4BYkEfBA6O6donzWlSihBXox7C0sKR6b'
 ckeditor = CKEditor(app)
 Bootstrap5(app)
 
+
 # Configure Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
+# Gravatar
+gravatar = Gravatar(app,
+                    size=100,
+                    rating='g',
+                    default='retro',
+                    force_default=False,
+                    force_lower=False,
+                    use_ssl=False,
+                    base_url=None)
+
+
 # CREATE DATABASE
 class Base(DeclarativeBase):
     pass
+
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///posts.db'
 db = SQLAlchemy(model_class=Base)
 db.init_app(app)
@@ -187,7 +201,7 @@ def get_all_posts():
     return render_template("index.html", all_posts=posts)
 
 
-# TODO: Allow logged-in users to comment on posts
+# Allow logged-in users to comment on posts
 @app.route("/post/<int:post_id>", methods=["GET", "POST"])
 def show_post(post_id):
     form = CommentForm()
@@ -215,7 +229,7 @@ def show_post(post_id):
             flash("Please login to comment on posts.")
             return redirect(url_for("login"))
 
-    return render_template("post.html", post=requested_post, form=form, comments=all_comments)
+    return render_template("post.html", post=requested_post, form=form,  comments=all_comments)
 
 
 # Use a decorator so only an admin user can create a new post
