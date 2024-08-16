@@ -76,12 +76,9 @@ def load_user(user_id):
 
 def admin_only(f):
     @wraps(f)
-    def decorator():
-        user_id = None
-        if current_user.is_authenticated:
-            user_id = current_user.id
-            if user_id == 1:
-                return f()
+    def decorator(*args, **kwargs):
+        if current_user.id == 1:
+            return f(*args, **kwargs)
         else:
             return abort(403)
     return decorator
