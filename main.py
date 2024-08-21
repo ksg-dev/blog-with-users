@@ -10,10 +10,12 @@ from sqlalchemy import Integer, String, Text, ForeignKey
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 from typing import List
+from dotenv import load_dotenv
+import os
 # Import your forms from the forms.py
 from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm
 
-
+load_dotenv()
 '''
 Make sure the required packages are installed: 
 Open the Terminal in PyCharm (bottom left). 
@@ -28,7 +30,7 @@ This will install the packages from the requirements.txt for this project.
 '''
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '4BYkEfBA6O6donzWlSihBXox7C0sKR6b'
+app.config['SECRET_KEY'] = os.environ["SECRET_KEY"]
 ckeditor = CKEditor(app)
 Bootstrap5(app)
 
@@ -54,7 +56,7 @@ class Base(DeclarativeBase):
     pass
 
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///posts.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ["SQL_AL_DB_URI"]
 db = SQLAlchemy(model_class=Base)
 db.init_app(app)
 
@@ -129,7 +131,6 @@ def admin_only(f):
         else:
             return abort(403)
     return decorator
-
 
 
 # Use Werkzeug to hash the user's password when creating a new user.
